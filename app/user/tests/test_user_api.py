@@ -22,8 +22,8 @@ def create_user(**params):
 class PublicUserApiTests(TestCase):
     """Tests the public features of the user API."""
 
-    def setUP(self):
-        self.client = APIClient
+    def setUp(self):
+        self.client = APIClient()
 
     def test_create_user_success(self):
         """Test creating a user is successful."""
@@ -85,13 +85,13 @@ class PublicUserApiTests(TestCase):
         """Test return error if creadentials not valid."""
         create_user(email="test@example.com", password="goodpass")
 
-        payload = {"email": "", "password": "badpass"}
+        payload = {"email": "test@example.com", "password": "badpass"}
         res = self.client.post(TOKEN_URL, payload)
 
         self.assertNotIn("token", res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def create_token_blank_password(self):
+    def test_create_token_blank_password(self):
         """Test posting a blank password returns an error"""
 
         payload = {"email": "test@example.com", "password": ""}
@@ -110,7 +110,7 @@ class PublicUserApiTests(TestCase):
 class PrivateUserApiTest(TestCase):
     """Test API requests that require authentication."""
 
-    def setUP(self):
+    def setUp(self):
         self.user = create_user(
             email="test@example.com",
             password="testpass123",
